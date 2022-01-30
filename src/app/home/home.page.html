@@ -1,20 +1,103 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header>
+  <ion-toolbar color="primary">
     <ion-title>
-      Blank
+      ion-datetime sample
     </ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment [(ngModel)]="segmentValue" name="segment">
+      <ion-segment-button *ngFor="let item of segmentTypes" [value]="item"><ion-label>{{item[0].toUpperCase() + item.slice(1)}}</ion-label></ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ng-container  *ngIf="segmentValue === 'accordion'">
+    <ion-list>
+      <ion-list-header><ion-label>Accordion</ion-label></ion-list-header>
+      <ng-container *ngFor="let type of ['date', 'date-time', 'month', 'month-year', 'time', 'time-date', 'year']">
+        <ion-accordion-group #accordionGroup>
+          <ion-accordion class="datetime-accordion datetime-{{type}}" [value]="'open-' + type">
+            <ion-item slot="header">
+              <ion-label>{{type}}</ion-label>
+              <ion-text slot="end">{{ accordionValue }}</ion-text>
+            </ion-item>
+            <ion-datetime
+              size="cover"
+              slot="content"
+              [presentation]="type"
+              #accordionDateEl
+              (ionChange)="accordionValue = changeDate(accordionDateEl.value, undefined, accordionGroup)"
+            >
+            </ion-datetime>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ng-container>
+    </ion-list>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+    <ion-list>
+      <ion-list-header><ion-label>Multi Value</ion-label></ion-list-header>
+      <ion-item slot="header" detail="false" lines="none">
+        <ion-label>multi</ion-label>
+        <ion-buttons>
+          <ion-button class="datetime-selectable" (click)="openMultiAccordion(multiAccordionGroup, 'month-year')">{{ multiAccordionValue | date: 'yyyy-MM' }}</ion-button>
+          <ion-text>-</ion-text>
+          <ion-button class="datetime-selectable" (click)="openMultiAccordion(multiAccordionGroup, 'date')">{{ multiAccordionValue | date: 'dd' }}</ion-button>
+        </ion-buttons>
+      </ion-item>
+      <ion-accordion-group #multiAccordionGroup>
+        <ion-accordion class="datetime-accordion datetime-multi" [value]="'open-multi'" toggle-icon-slot="none">
+          <ion-datetime
+            size="cover"
+            slot="content"
+            [presentation]="multiAccordionDatetimeType"
+            #multiAccordionEl
+            (ionChange)="multiAccordionValue = changeDate(multiAccordionEl.value, undefined, multiAccordionGroup)"
+          >
+          </ion-datetime>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-list>
+
+  </ng-container>
+
+  <ion-list *ngIf="segmentValue === 'modal'">
+    <ion-list-header><ion-label>Modal</ion-label></ion-list-header>
+    <ng-container *ngFor="let type of ['date', 'date-time', 'month', 'month-year', 'time', 'time-date', 'year']">
+      <ion-item [id]="'open-modal-' + type" button="true">
+        <ion-label>{{type}}</ion-label>
+        <ion-text slot="end">{{ popoverValue }}</ion-text>
+        <ion-modal class="datetime-modal datetime-{{type}}"  #modalDate [trigger]="'open-modal-' + type">
+          <ng-template>
+            <ion-datetime
+              size="cover"
+              #modalDateEl
+              [presentation]="type"
+              (ionChange)="popoverValue = changeDate(modalDateEl.value, modalDate)"
+            ></ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+
+  <ion-list *ngIf="segmentValue === 'popover'">
+    <ion-list-header><ion-label>Popover</ion-label></ion-list-header>
+    <ng-container *ngFor="let type of ['date', 'date-time', 'month', 'month-year', 'time', 'time-date', 'year']">
+      <ion-item [id]="'open-popover-' + type" button="true">
+        <ion-label>{{type}}</ion-label>
+        <ion-text slot="end">{{ popoverValue }}</ion-text>
+        <ion-popover class="datetime-popover" #popoverDate [trigger]="'open-popover-' + type" side="right" alignment="end">
+          <ng-template>
+            <ion-datetime
+              size="cover"
+              #popoverDateEl
+              [presentation]="type"
+              (ionChange)="popoverValue = changeDate(popoverDateEl.value, popoverDate)"
+            ></ion-datetime>
+          </ng-template>
+        </ion-popover>
+      </ion-item>
+    </ng-container>
+  </ion-list>
 </ion-content>
