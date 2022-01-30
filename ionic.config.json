@@ -1,0 +1,7 @@
+{
+  "name": "ionic-datetime-picker",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
